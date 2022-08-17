@@ -88,7 +88,7 @@ public class TransformationAnalysis extends ForwardFlowAnalysis<Unit, Transforma
             Term term = visitor.getTerm().substitute(in.getTrans());
             TransAndTerm updated = new TransAndTerm(trans, term);
             table.ensurePresent(currentRef);
-            TransAndTerm cleaned = clean(updated);
+            TransAndTerm cleaned = updated; // clean(updated);
             table.joinIfPresent(currentRef, cleaned);
             if (DEBUGGING) {
                 System.out.println("Exit node of " + currentMethod.getName());
