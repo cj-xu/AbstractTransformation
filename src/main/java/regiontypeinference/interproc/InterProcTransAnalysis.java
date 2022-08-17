@@ -54,7 +54,7 @@ public class InterProcTransAnalysis {
                     System.out.println(table);
                 }
 
-                System.out.println("\nAnalysis result of the method " + entryPointRef);
+                System.out.println("Analysis result of the method " + entryPointRef);
 
                 TransAndTerm tt = table.get(entryPointRef);
                 Transformation trans = tt.getTrans();
