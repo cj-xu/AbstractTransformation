@@ -193,7 +193,7 @@ public final class AbstractMethodTable extends HashMap<SootMethodRef, TransAndTe
     private TransAndTerm defaultTransAndTerm(SootMethodRef m) {
         // methods that will be analysed can get the bottom annotation
         Supplier<TransAndTerm> bottom = () -> {
-            return new TransAndTerm(Transformation.identity(), new Term());
+            return new TransAndTerm(Transformation.bottom(), new Term());
         };
         // unknown methods get a conservative approximation
         Supplier<TransAndTerm> unknown = () -> {
