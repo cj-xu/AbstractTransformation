@@ -83,11 +83,11 @@ public class Main {
         System.out.println();
         System.out.println();
         System.out.println("======================================== Test Case 4 ========================================");
-        System.out.println("File location: testcases/paperexamples/Vairable.java");
+        System.out.println("File location: testcases/paperexamples/Variable.java");
         System.out.println("A simple test case to check the strong update for variables.");
         System.out.println();
         // analyze the method h()
-        runTestCase("testcases.paperexamples.Vairable", "h");
+        runTestCase("testcases.paperexamples.Variable", "h");
         System.out.println("There are multiple assignments for the variable x.\n" +
                 "The return type indicates that in the end x points to the object created in line 8.");
         System.out.println("==================================== End of Test Case 4 =====================================");

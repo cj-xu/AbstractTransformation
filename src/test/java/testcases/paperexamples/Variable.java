@@ -1,6 +1,6 @@
 package testcases.paperexamples;
 
-public class Vairable {
+public class Variable {
 
     Object h() {
         Object x = new Object();
