@@ -9,7 +9,11 @@ public class Field {
         M f;
     }
 
-    // return type: <created at .(Field.java:15)> , <created at .(Field.java:17)>
+    /**
+     * Due to the weak update for fields, the field <created at .(Field.java:18)>.f
+     * has type {<created at .(Field.java:19)>, <created at .(Field.java:21)>}, and thus
+     * so does the variable x.
+     */
     M h() {
        N y = new N();
        y.f = new M();
