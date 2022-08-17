@@ -92,7 +92,21 @@ public class Term {
 
     @Override
     public String toString() {
-        return atoms.toString();
+        StringBuffer sb = new StringBuffer();
+        sb.append("{");
+        if (atoms != null && !atoms.isEmpty()) {
+            boolean first = true;
+            for (Atom atom : atoms) {
+                if (first) {
+                    first = false;
+                } else {
+                    sb.append(", ");
+                }
+                sb.append(atom.toString());
+            }
+        }
+        sb.append("}");
+        return sb.toString();
     }
 
     @Override

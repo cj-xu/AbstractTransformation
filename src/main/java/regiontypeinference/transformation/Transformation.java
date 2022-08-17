@@ -332,7 +332,7 @@ public class Transformation {
     public String toString() {
         if (assigns != null) {
             StringBuffer sb = new StringBuffer();
-            sb.append("{");
+            sb.append("[");
             boolean first = true;
             for(Key key : assigns.keySet()) {
                 if (first) {
@@ -348,7 +348,7 @@ public class Transformation {
                 }
                 sb.append(assigns.get(key).toString());
             }
-            sb.append("}");
+            sb.append("]");
             return sb.toString();
         } else {
             char bot = '\u22A5';
