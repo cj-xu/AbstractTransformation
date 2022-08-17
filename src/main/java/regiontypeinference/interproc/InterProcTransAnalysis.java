@@ -63,13 +63,13 @@ public class InterProcTransAnalysis {
                 Environment env = envft.getEnvironment();
                 FieldTable ft = envft.getFieldTable();
                 Regions r = tt.getTerm().instantiate(env, ft);
-                if (! r.toSet().isEmpty()) {
-                    System.out.println("  Transformation: " + trans);
-                    System.out.println("  Type term: " + term);
-                    System.out.println("  Environment: " + env);
-                    System.out.println("  Field table: " + ft);
-                    System.out.println("  Type: " + r);
-                }
+                //if (! r.toSet().isEmpty()) {
+                System.out.println("  Transformation: " + trans);
+                System.out.println("  Type term: " + term);
+                System.out.println("  Environment: " + env);
+                System.out.println("  Field table: " + ft);
+                System.out.println("  Type: " + r);
+                //}
                 return true;
             }
             if (iteration++ >= maximumIteration) {
