@@ -28,11 +28,12 @@ environment variables to be `true`:
 
 ## Running with Docker
 
-Supposing the repository has been cloned to the directory
-`AbstractTransformation`, a Docker container can be built with:
+Supposing the repository has been cloned to the current directory, a Docker
+container can be built with:
 
 ```
-docker build AbstractTransformation -t abstracttransformation
+cd AbstractTransformation
+docker build . -t abstracttransformation
 ```
 
 The artifact can then be run as follows:
