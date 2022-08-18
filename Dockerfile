@@ -5,7 +5,7 @@ WORKDIR /app
 RUN gradle build
 RUN gradle shadowJar
 
-FROM amazoncorretto:8-alpine3.14
+FROM amazoncorretto:8
 COPY --from=GRADLE /app /app
 WORKDIR /app
 
