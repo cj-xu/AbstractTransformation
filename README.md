@@ -6,9 +6,9 @@ This is a prototype implementation of the type inference algorithm introduced in
 
 based on the [Soot](http://soot-oss.github.io/soot/) framework. It takes a Java (bytecode) program as input and computes the region type of the given method in the program.
 
-Among the others, access graphs and abstract transformations are implemented in the
+Among the others, abstract transformations and their operations are implemented in the
 [regiontypeinference.transformation](src/main/java/regiontypeinference/transformation/)
-package, and the type inference algorithm in the
+package, and the core of the type inference algorithm in the
 [regiontypeinference.intraproc.TransformationAnalysis](src/main/java/regiontypeinference/intraproc/TransformationAnalysis.java)
 class.
 
