@@ -42,7 +42,7 @@ The artifact can then be run as follows:
 docker run abstracttransformation
 ```
 
-This will start the analysis for the examples from the paper an output the
+This will start the analysis for the examples from the paper and output the
 results.
 
 
