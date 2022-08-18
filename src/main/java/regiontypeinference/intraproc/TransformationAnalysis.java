@@ -13,7 +13,7 @@ import java.util.*;
 
 public class TransformationAnalysis extends ForwardFlowAnalysis<Unit, TransformationFlow> {
 
-    private static boolean DEBUGGING = false;
+    private static boolean DEBUGGING = Boolean.valueOf(System.getenv().getOrDefault("DEBUGGING", "false"));
     private final AbstractMethodTable table;
     private final SootMethodRef currentRef;
     private final SootMethod currentMethod;

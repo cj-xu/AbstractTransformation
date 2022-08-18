@@ -16,7 +16,7 @@ import soot.toolkits.graph.BriefUnitGraph;
 
 public class InterProcTransAnalysis {
 
-    private static boolean SHOW_TABLE = false;
+    private static boolean SHOW_TABLE = Boolean.valueOf(System.getenv().getOrDefault("SHOW_TABLE", "false"));
     private AbstractMethodTable table;
     private SootMethodRef entryPointRef;
 
