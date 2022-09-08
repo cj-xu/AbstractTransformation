@@ -1,6 +1,6 @@
 # Inferring Region Types
 
-This is a prototype implementation of the type inference algorithm introduced in the paper
+This is a prototype implementation of the type inference algorithm introduced in the [paper](https://arxiv.org/abs/2209.02147)
 
 > U. Schöpp and C. Xu. **Inferring Region Types via an Abstract Notion of Environment Transformation**. To appear at APLAS'22.
 
@@ -69,4 +69,3 @@ a project for the artifact by opening the build.gradle file as a project.
 - [Ulrich Schöpp](https://ulrichschoepp.de/)
 - [Chuangjie Xu](https://cj-xu.github.io/)
 - Eugen Zălinescu
-- Jakob Knauer
