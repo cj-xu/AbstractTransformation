@@ -315,6 +315,20 @@ public class Transformation {
         return new Transformation(map);
     }
 
+    public Transformation removeJimpleLocals() {
+        Map<Key, Term> map = new HashMap<>();
+        for(Key key : assigns.keySet()) {
+            if (! (key instanceof VariableAtom)) {
+                map.put(key, assigns.get(key));
+            } else {
+                if (!((VariableAtom) key).getVar().getName().startsWith("$")) {
+                    map.put(key, assigns.get(key));
+                }
+            }
+        }
+        return new Transformation(map);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
