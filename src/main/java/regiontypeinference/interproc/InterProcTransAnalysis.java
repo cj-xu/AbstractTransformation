@@ -65,10 +65,14 @@ public class InterProcTransAnalysis {
                 Regions r = tt.getTerm().instantiate(env, ft);
                 //if (! r.toSet().isEmpty()) {
                 System.out.println("  Transformation: " + trans);
+                if (!trans.equals(trans.removeJimpleLocals())) {
+                    System.out.println("  Transformation ignoring the Jimple variables: " + trans.removeJimpleLocals());
+                }
                 System.out.println("  Type term: " + term);
-                System.out.println("  Environment: " + env);
-                System.out.println("  Field table: " + ft);
-                System.out.println("  Type: " + r);
+                System.out.println("  Input environment: ()");
+                System.out.println("  Output environment: " + env);
+                System.out.println("  Output field table: " + ft);
+                System.out.println("  Output type: " + r);
                 //}
                 return true;
             }
