@@ -18,6 +18,9 @@ public class Environment extends HashMap<Local, Regions> {
 
   @Override
   public String toString() {
+    if (entrySet().stream().allMatch(entry -> entry.getValue().toSet().isEmpty())) {
+      return "()";
+    }
     StringBuilder builder = new StringBuilder();
     builder.append("(");
     builder.append(entrySet().stream()

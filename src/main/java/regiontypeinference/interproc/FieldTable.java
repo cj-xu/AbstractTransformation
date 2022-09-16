@@ -8,6 +8,7 @@ import javax.annotation.concurrent.Immutable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * Data structure for the field table.
@@ -28,16 +29,11 @@ public final class FieldTable extends HashMap<FieldTable.Key, Regions> {
   @Override
   public String toString() {
     StringBuilder buffer = new StringBuilder();
-    boolean first = true;
-    for (Map.Entry<Key, Regions> entry : entrySet()) {
-      if (! first) {
-        buffer.append(", ");
-      }
-      first = false;
-      buffer.append(entry.getKey().getRegion())
-              .append(".").append(entry.getKey().getField().getName())
-              .append(": ").append(entry.getValue());
-    }
+    buffer.append("(");
+    buffer.append(entrySet().stream()
+            .map(entry -> entry.getKey().getRegion() + "." + entry.getKey().getField().getName() + ": " + entry.getValue())
+            .collect(Collectors.joining(", ")));
+    buffer.append(")");
     return buffer.toString();
   }
 

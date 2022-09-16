@@ -10,6 +10,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * A term is a finite joint of atoms.
@@ -92,21 +93,11 @@ public class Term {
 
     @Override
     public String toString() {
-        StringBuffer sb = new StringBuffer();
-        sb.append("{");
-        if (atoms != null && !atoms.isEmpty()) {
-            boolean first = true;
-            for (Atom atom : atoms) {
-                if (first) {
-                    first = false;
-                } else {
-                    sb.append(", ");
-                }
-                sb.append(atom.toString());
-            }
+        if (atoms == null || atoms.isEmpty()) {
+            return "⊥";
+        } else {
+            return "{" + atoms.stream().map(Atom::toString).collect(Collectors.joining(", ")) + "}";
         }
-        sb.append("}");
-        return sb.toString();
     }
 
     @Override

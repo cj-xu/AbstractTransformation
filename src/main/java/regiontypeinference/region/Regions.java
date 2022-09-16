@@ -31,9 +31,11 @@ public final class Regions {
 
   @Override
   public String toString() {
-    return "{" +
-            regions.stream().map(Region::toString).collect(Collectors.joining(", ")) +
-            "}";
+    if (regions.isEmpty()) {
+      return "⊥";
+    } else {
+      return "{" + regions.stream().map(Region::toString).collect(Collectors.joining(", ")) + "}";
+    }
   }
 
   public Regions join(Regions other) {
