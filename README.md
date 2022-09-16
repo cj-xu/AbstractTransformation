@@ -43,8 +43,67 @@ docker run -e SHOW_TABLE=true -e DEBUGGING=true abstracttransformation
 
 The artifact can also be built using [Gradle](https://gradle.org/). A configuration file [build.gradle](build.gradle) is provided in the repository. For example, in an IDE (e.g. [IntelliJ IDEA](https://www.jetbrains.com/idea/)), one can setup a project for the artifact by opening the build.gradle file as a project.
 
-### Example and Analysis Result
-TODO
+### Interpreting the Analysis Result
+The following Java code is taken from the example of linked lists given in Appendix B of the paper and available.
+```java
+class Node {
+    Node next;
+    Node last() {
+        TaintAPI.emitA();
+        if (next == null) {
+            return this;
+        } else {
+            return next.last();
+        }
+    }
+}
+```
+Running our tool with it will print the following result:
+```
+Analysis result of the method <testcases.paperexamples.Node: testcases.paperexamples.Node last()>
+  Transformation: [$stack1 := {this.next, this.(next,[(next, next)],next)}, $stack3 := {$stack3, this.next, this.(next,[(next, next)],next)}, $stack2 := {this.next, this.(next,[(next, next)],next), $stack2}, this := {this.next, this.(next,[(next, next)],next), this}]
+  Transformation ignoring the Jimple variables: [this := {this.next, this.(next,[(next, next)],next), this}]
+  Type term: {this.next, this.(next,[(next, next)],next), this}
+  Input environment: ()
+  Output environment: ()
+  Output field table: ()
+  Output type: ⊥
+```
+We explain how to interpret the above analysis result:
+* `Transformation` &mdash; the abstract transformation of the method
+* `Transformation ignoring the Jimple variables` &mdash; The abstract transformation may contain additional variables due to the translation of Java Bytecode to Jimple programs in the Soot framework. We remove these variables in the result for the sake of readability.
+* `Type term` &mdash; the term to be instantiated with a given environment into a output type for the method
+* `Input environment` &mdash; typing environment to execute the method, set to be empty `()` by default
+* `Output environment` &mdash; typing environment after execute the method with the input environment
+* `Output field table` &mdash; field table after execute the method with the input environment
+* `Output type` &mdash; output type of the method, obtained by instantiating the type term with the output environment and field table
+
+The abstract transformation of `last()` is `[this := {this.next, this.(next,[(next, next)],next), this}]`. It performs no update to the empty environment and thus the output type of `last()` with the empty environment is `⊥`, i.e. there is no region for the output value.
+
+For the following method
+```java
+class Test {
+    Node linear () {
+        Node x = new Node();
+        Node y = new Node();
+        y.next = x;
+        return y.last();
+    }
+    ...
+}
+```
+the analysis result is
+```
+Analysis result of the method <testcases.paperexamples.Test: testcases.paperexamples.Node linear()>
+  Transformation: [$stack4 := {<created at .(Node.java:24)>}, this := {<created at .(Node.java:24)>, <created at .(Node.java:24)>.(next,[(next, next)],next), <created at .(Node.java:24)>.next}, $stack2 := {$stack2, <created at .(Node.java:24)>.(next,[(next, next)],next), <created at .(Node.java:24)>.next}, $stack5 := {<created at .(Node.java:24)>, <created at .(Node.java:24)>.(next,[(next, next)],next), <created at .(Node.java:24)>.next}, $stack3 := {$stack3, <created at .(Node.java:24)>.(next,[(next, next)],next), <created at .(Node.java:24)>.next}, y := {<created at .(Node.java:24)>}, $stack3 := {<created at .(Node.java:23)>}, <created at .(Node.java:24)>.next :> {<created at .(Node.java:23)>}, this := {<created at .(Node.java:24)>}, x := {<created at .(Node.java:23)>}, $stack1 := {<created at .(Node.java:24)>.(next,[(next, next)],next), <created at .(Node.java:24)>.next, $stack1}]
+  Transformation ignoring the Jimple variables: [this := {<created at .(Node.java:24)>, <created at .(Node.java:24)>.(next,[(next, next)],next), <created at .(Node.java:24)>.next}, y := {<created at .(Node.java:24)>}, <created at .(Node.java:24)>.next :> {<created at .(Node.java:23)>}, this := {<created at .(Node.java:24)>}, x := {<created at .(Node.java:23)>}]
+  Type term: {<created at .(Node.java:24)>, <created at .(Node.java:24)>.(next,[(next, next)],next), <created at .(Node.java:24)>.next}
+  Input environment: ()
+  Output environment: ($stack4: {<created at .(Node.java:24)>}, this: {<created at .(Node.java:24)>, <created at .(Node.java:23)>}, $stack2: {<created at .(Node.java:23)>}, x: {<created at .(Node.java:23)>}, $stack5: {<created at .(Node.java:24)>, <created at .(Node.java:23)>}, $stack3: {<created at .(Node.java:23)>}, y: {<created at .(Node.java:24)>}, $stack3: {<created at .(Node.java:23)>}, $stack1: {<created at .(Node.java:23)>}, this: {<created at .(Node.java:24)>})
+  Output field table: (<created at .(Node.java:24)>.next: {<created at .(Node.java:23)>}, <created at .(Node.java:23)>.next: {null})
+  Output type: {<created at .(Node.java:24)>, <created at .(Node.java:23)>}
+```
+where the output type `{<created at .(Node.java:24)>, <created at .(Node.java:23)>}` means that the returned value of the method `linear()` is created either in line 24 of [Node.java](src/test/java/testcases/paperexamples/Node.java) or line 23.
 
 ## Structure of the Source Code
 
@@ -87,7 +146,11 @@ The algorithm to infer region types for Featherweight Java programs introduced i
 * **Appendix A. Composition and Join of Abstract Transformations**
   * Operations on [terms](src/main/java/regiontypeinference/transformation/Term.java) and [abstract transformations](src/main/java/regiontypeinference/transformation/Transformation.java) are implemented in the corresponding classes.
 * **Appendix B. An Example of Inferring Region Types**
-  * The example of linked lists is implemented in [testcases.paperexamples.Node](src/test/java/testcases/paperexamples/Node.java).
+  * The example of linked lists is implemented in [testcases.paperexamples.Node](src/test/java/testcases/paperexamples/Node.java).  
+    When running the tool with this example, one can set the environment variable `SHOW_TABLE` to `true` to print the abstract transformations of the methods in each iteration.
+
+## Reusing and Extending the Artifact
+TODO
 
 ## Previous Versions
 - [GuideForceJava](https://github.com/cj-xu/GuideForceJava), based on our [PPDP'21](https://dl.acm.org/doi/10.1145/3479394.3479413) paper.
