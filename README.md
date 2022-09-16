@@ -54,25 +54,40 @@ The [src](src) folder consists of a [main](src/main) module for the development 
   * [mockup](src/main/java/mockup): mock code of some library methods (not needed for the included test cases)
   * [ourlib](src/main/java/ourlib): our library to support mock code and test cases
   * [regiontypeinference](src/main/java/regiontypeinference): implementation of the region type inference algorithm
-    * [interproc](src/main/java/regiontypeinference/interproc): an interprocedural analysis to infer the type of each method of the program
-    * [intraproc](src/main/java/regiontypeinference/intraproc): a forward flow analysis to compute an abstract transformation from the control flow graph of the method
+    * [interproc](src/main/java/regiontypeinference/interproc): an [interprocedural analysis](src/main/java/regiontypeinference/interproc/InterProcTransAnalysis.java) to infer the type of each method of the program
+    * [intraproc](src/main/java/regiontypeinference/intraproc): a [forward flow analysis](src/main/java/regiontypeinference/intraproc/TransformationAnalysis.java) to compute an abstract transformation from the control flow graph of the method
     * [policy](src/main/java/regiontypeinference/policy): policies specifying the default types of intrinsic methods
     * [region](src/main/java/regiontypeinference/region): various regions representing properties of program values
-    * [transformation](src/main/java/regiontypeinference/transformation): development of abstract transformation
+    * [transformation](src/main/java/regiontypeinference/transformation): development of abstract transformations
     * [Main.java](src/main/java/regiontypeinference/Main.java): main method to run the tool with the [test cases](src/test/java/testcases/paperexamples)
     * [MockInfo.java](src/main/java/regiontypeinference/MockInfo.java): information about which classes have mock code
     * [TA.java](src/main/java/regiontypeinference/TA.java): wrap-up of the tool, including Soot environment configuration
 
-### Link to the Paper
-The algorithm to infer region types for Featherweight Java programs introduced in the paper has been fully implemented.
+### Linking the Results of the Paper
+The algorithm to infer region types for Featherweight Java programs introduced in the paper has been fully implemented. Here is a mapping from the [paper](https://arxiv.org/abs/2209.02147) to the artifact:
 
-TODO
-
-Among the others, abstract transformations and their operations are implemented in the
-[regiontypeinference.transformation](src/main/java/regiontypeinference/transformation/)
-package, and the core of the type inference algorithm in the
-[regiontypeinference.intraproc.TransformationAnalysis](src/main/java/regiontypeinference/intraproc/TransformationAnalysis.java)
-class.
+* **Section 2. Background**
+  * Access graphs &mdash; [regiontypeinference.transformation.FieldGraph](src/main/java/regiontypeinference/transformation/FieldGraph.java)
+* **Section 3. A Theory of Abstract Transformations**
+  * Running example (Fig. 1) &mdash; [testcases.paperexamples.RunningExample](src/test/java/testcases/paperexamples/RunningExample.java)  
+    One can run e.g. the [main](src/main/java/regiontypeinference/Main.java) method to get the analysis result of the running example.
+  * Term &mdash; [regiontypeinference.transformation.Term](src/main/java/regiontypeinference/transformation/Term.java)  
+    A term is a set of [atoms](src/main/java/regiontypeinference/transformation/Atom.java) (e.g. [VariableAtom](src/main/java/regiontypeinference/transformation/VariableAtom.java), [VariableFieldAtom](src/main/java/regiontypeinference/transformation/VariableFieldAtom.java), [RegionAtom](src/main/java/regiontypeinference/transformation/RegionAtom.java) and [RegionFieldAtom](src/main/java/regiontypeinference/transformation/RegionFieldAtom.java)).
+  * Abstract transformation &mdash; [regiontypeinference.transformation.Transformation](src/main/java/regiontypeinference/transformation/Transformation.java)  
+    An abstract transformation is a mapping from [keys](src/main/java/regiontypeinference/transformation/Key.java) to [terms](src/main/java/regiontypeinference/transformation/Term.java), containing assignments (i.e. elements from [VariableAtom](src/main/java/regiontypeinference/transformation/VariableAtom.java)) and constraints (i.e. elements from [VariableFieldAtom](src/main/java/regiontypeinference/transformation/VariableFieldAtom.java) or [RegionFieldAtom](src/main/java/regiontypeinference/transformation/RegionFieldAtom.java)).
+* **Section 4. Type Inference via Abstract Transformations**
+  * Region &mdash; [regiontypeinference.region](src/main/java/regiontypeinference/region)  
+    In particular, the region $\mathsf{Null}$ is implemented as a [SpecialRegion](src/main/java/regiontypeinference/region/SpecialRegion.java) and $\mathsf{CreatedAt}$ as [AllocationSiteRegion](src/main/java/regiontypeinference/region/AllocationSiteRegion.java)
+  * Abstract method table &mdash; [regiontypeinference.interproc.AbstractMethodTable](src/main/java/regiontypeinference/interproc/AbstractMethodTable.java)  
+    An abstract method table assigns an abstract transformation and a term ([TransAndTerm](src/main/java/regiontypeinference/interproc/TransAndTerm.java)) to each method.
+  * $[[-]]$ &mdash; [regiontypeinference.intraproc.TransformationAnalysis](src/main/java/regiontypeinference/intraproc/TransformationAnalysis.java)  
+    The core of the type inference algorithm is the $[[-]]$ function that computes an abstract transformation and a type term for the given Featherweight Java expression. It becomes a forward flow analysis for the control flow graphs of the Java program. In particular, the [TransformationAnalysis](src/main/java/regiontypeinference/intraproc/TransformationAnalysis.java) has a `flowThrough` method that computes an abstract transformation for each node in the control flow graph and then concatenates it with the one generated from the previous nodes.
+  * Computing the abstract method table $T$ &mdash; [regiontypeinference.interproc.InterProcTransAnalysis](AbstractTransformation/src/main/java/regiontypeinference/interproc/InterProcTransAnalysis.java)  
+    The fixed point procedure that computes an abstract transformation for each method in the program is implemented as an [interprocedural analysis](AbstractTransformation/src/main/java/regiontypeinference/interproc/InterProcTransAnalysis.java) that uses the above [TransformationAnalysis](src/main/java/regiontypeinference/intraproc/TransformationAnalysis.java).
+* **Appendix A. Composition and Join of Abstract Transformations**
+  * Operations on [terms](src/main/java/regiontypeinference/transformation/Term.java) and [abstract transformations](src/main/java/regiontypeinference/transformation/Transformation.java) are implemented in the corresponding classes.
+* **Appendix B. An Example of Inferring Region Types**
+  * The example of linked lists is implemented in [testcases.paperexamples.Node](src/test/java/testcases/paperexamples/Node.java).
 
 ## Previous Versions
 - [GuideForceJava](https://github.com/cj-xu/GuideForceJava), based on our [PPDP'21](https://dl.acm.org/doi/10.1145/3479394.3479413) paper.
