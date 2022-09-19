@@ -6,7 +6,7 @@ This is a prototype implementation of the type inference algorithm introduced in
 
 based on the [Soot](http://soot-oss.github.io/soot/) framework. It takes a Java (bytecode) program as input and computes the region type of the given method in the program.
 
-The arXiv version of the above paper is availale [here](https://arxiv.org/abs/2209.02147).
+The arXiv version of the above paper is available [here](https://arxiv.org/abs/2209.02147).
 
 ## Running the Experiments
 
@@ -41,10 +41,10 @@ docker run -e SHOW_TABLE=true -e DEBUGGING=true abstracttransformation
 
 ### Building with Gradle
 
-The artifact can also be built using [Gradle](https://gradle.org/). A configuration file [build.gradle](build.gradle) is provided in the repository. For example, in an IDE (e.g. [IntelliJ IDEA](https://www.jetbrains.com/idea/)), one can setup a project for the artifact by opening the build.gradle file as a project.
+The artifact can also be built using [Gradle](https://gradle.org/). A configuration file [build.gradle](build.gradle) is provided in the repository. For example, in an IDE (e.g. [IntelliJ IDEA](https://www.jetbrains.com/idea/)), one can set up a project for the artifact by opening the build.gradle file as a project.
 
 ### Interpreting the Analysis Result
-The following Java code is taken from the example of linked lists given in Appendix B of the paper and available.
+The following Java code is taken from the example of linked lists given in Appendix B of the paper and available [here](src/test/java/testcases/paperexamples/Node.java).
 ```java
 class Node {
     Node next;
@@ -73,7 +73,7 @@ We explain how to interpret the above analysis result:
 * `Transformation` &mdash; the abstract transformation of the method
 * `Transformation ignoring the Jimple variables` &mdash; The abstract transformation may contain additional variables due to the translation of Java Bytecode to Jimple programs in the Soot framework. We remove these variables in the result for the sake of readability.
 * `Type term` &mdash; the term to be instantiated with a given environment into a output type for the method
-* `Input environment` &mdash; typing environment to execute the method, set to be empty `()` by default
+* `Input environment` &mdash; typing environment to execute the method, by default set to be the empty environment `()` where all variables and fields have the bottom type `⊥`
 * `Output environment` &mdash; typing environment after execute the method with the input environment
 * `Output field table` &mdash; field table after execute the method with the input environment
 * `Output type` &mdash; output type of the method, obtained by instantiating the type term with the output environment and field table
@@ -103,7 +103,7 @@ Analysis result of the method <testcases.paperexamples.Test: testcases.paperexam
   Output field table: (<created at .(Node.java:24)>.next: {<created at .(Node.java:23)>}, <created at .(Node.java:23)>.next: {null})
   Output type: {<created at .(Node.java:24)>, <created at .(Node.java:23)>}
 ```
-where the output type `{<created at .(Node.java:24)>, <created at .(Node.java:23)>}` means that the returned value of the method `linear()` is created either in line 24 of [Node.java](src/test/java/testcases/paperexamples/Node.java) or line 23.
+where the output type `{<created at .(Node.java:24)>, <created at .(Node.java:23)>}` means that the returned value of the method `linear()` is created either in line 24 or line 23 of [Node.java](src/test/java/testcases/paperexamples/Node.java).
 
 ## Structure of the Source Code
 
@@ -150,7 +150,18 @@ The algorithm to infer region types for Featherweight Java programs introduced i
     When running the tool with this example, one can set the environment variable `SHOW_TABLE` to `true` to print the abstract transformations of the methods in each iteration.
 
 ## Reusing and Extending the Artifact
-TODO
+
+### Working with Other Regions or Types
+Our development of abstract transformations is independent of our selection of region types (as discussed in Section 3 of the paper). Therefore, to adapt the algorithm to infer other types, one only needs to
+* Add new (region) types by implementing the [Region](src/main/java/regiontypeinference/region/Region.java) interface
+* Specify the types of intrinsic methods in a new policy by implementing the [Policy](src/main/java/regiontypeinference/policy/Policy.java) interface
+* Implement mock code for the library with the `@Replaces` annotation in the [mockup](src/main/java/mockup) package if needed
+
+### Supporting More Features of Java
+The current implementation covers only the core features of Java. To support others such as arrays, strings and dynamic invocation, we will implement the methods for the corresponding Jimple expressions or values in the [TransformationAnalysis](src/main/java/regiontypeinference/intraproc/TransformationAnalysis.java) class. For example, we need to implement the `caseDynamicInvokeExpr` method to support analysis of dynamic invocation of methods. To support exception handling, we also need to extend the `flowThrough` method to analyze also the code of the exception handlers (see [here](https://github.com/cj-xu/GuideForceJava/blob/800ad3af6c88282adeb4105338190e15f530a03f/src/main/java/guideforce/intraproc/FinitaryEffectAnalysis.java#L127) for an example).
+
+### Extension with Trace Effects
+We plan to extend the inference algorithm to a region-sensitive trace property analysis. As discussed in Section 5 of the paper, we need to implement some form of formal expressions to summarize the behaviour of the program. Then we need to extend [TransformationAnalysis](src/main/java/regiontypeinference/intraproc/TransformationAnalysis.java) to compute also a formal expression for the control flow graph of the given method as well as [InterProcTransAnalysis](src/main/java/regiontypeinference/interproc/InterProcTransAnalysis.java) to compute the method table which now contains also a formal expression for each method.
 
 ## Previous Versions
 - [GuideForceJava](https://github.com/cj-xu/GuideForceJava), based on our [PPDP'21](https://dl.acm.org/doi/10.1145/3479394.3479413) paper.
