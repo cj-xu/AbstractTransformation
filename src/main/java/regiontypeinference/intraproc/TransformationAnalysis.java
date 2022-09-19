@@ -427,9 +427,11 @@ public class TransformationAnalysis extends ForwardFlowAnalysis<Unit, Transforma
                     Key key = new VariableAtom(pars.get(i));
                     map.put(key, new Term(argAtoms.get(i)));
                 }
-                // Add the mapping from thisVar to calleeTerm
-                Local thisVar = calleeBody.getThisLocal();
-                map.put(new VariableAtom(thisVar), new Term(calleeAtom));
+                // Add the mapping from thisVar to calleeTerm, if the method is not static
+                if (!calleeAtom.equals(new RegionAtom(SpecialRegion.STATIC_REGION))) {
+                    Local thisVar = calleeBody.getThisLocal();
+                    map.put(new VariableAtom(thisVar), new Term(calleeAtom));
+                }
                 Transformation parsToArgs = Transformation.createAfterCleanup(map);
                 trans = trans.concat(parsToArgs);
                 term = term.substitute(parsToArgs);
