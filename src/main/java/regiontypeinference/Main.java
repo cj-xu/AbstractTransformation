@@ -23,8 +23,8 @@ public class Main {
         runTestCase("testcases.paperexamples.RunningExample", "foo");
         System.out.println("The above generated abstract transformation contains the following as discussed in the paper:");
         System.out.println("  [ x#3 := {y.f},\n" +
-                "    y#4 := {<created at .(RunningExample.java:13)>},\n" +
-                "    <created at .(RunningExample.java:13)>.f :> {y.f} ]");
+                "    y#4 := {<created at .(RunningExample.java:14)>},\n" +
+                "    <created at .(RunningExample.java:14)>.f :> {y.f} ]");
         System.out.println("where x#3 and y#4 are copies of the variables x and y.");
         System.out.println();
         System.out.println("The method f calls the method foo and thus the following environment is fed to the running example code:");
