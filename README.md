@@ -2,7 +2,7 @@
 
 This is a prototype implementation of the type inference algorithm introduced in the paper
 
-> U. Schöpp and C. Xu. **Inferring Region Types via an Abstract Notion of Environment Transformation**. To appear at APLAS'22.
+> U. Schöpp and C. Xu. **Inferring Region Types via an Abstract Notion of Environment Transformation**. APLAS'22.
 
 based on the [Soot](http://soot-oss.github.io/soot/) framework. It takes a Java (bytecode) program as input and computes the region type of the given method in the program.
 
